@@ -2,16 +2,22 @@ import React from 'react'
 import useMacbookStore from "../store/index.js";
 import clsx from "clsx";
 import {Canvas} from "@react-three/fiber";
-import {Box} from "@react-three/drei";
+import {Box, OrbitControls} from "@react-three/drei";
+import MacbookModel14 from "./models/Macbook-14.jsx";
+import StudioLights from "./three/StudioLights.jsx";
 
+import ModelSwitcher from "./three/ModelSwitcher.jsx";
+import {useMediaQuery} from "react-responsive";
 export const ProductViewer = () => {
     const {color,scale,setColor,setScale}=useMacbookStore();
+    const isMobile=useMediaQuery({query:'(max-width: 1024px)'});
     return (
         <section id="product-viewer">
             <h2>Take a look</h2>
             <div className="controls">
-                <p className="info">MacBookPro 17" {scale} in {color}</p>
-                <div className="flex-center gap-5 mt-5">
+                {/*<p className="info">MacBookPro | Available in 14</p>*/}
+                <div className="flex-center gap-5 mt-5" >
+
                     <div className="color-control">
                         <div onClick={()=>setColor('#adb5bd')} className={clsx('bg-neutral-300', color==='#adb5bd' && 'active')}/>
                         <div onClick={()=>setColor('#2e2c2e')} className={clsx('bg-neutral-900', color==='#2e2c2e' && 'active')}/>
@@ -27,9 +33,9 @@ export const ProductViewer = () => {
                     </div>
                 </div>
             </div>
-            <p className="text-white text-4xl">Render Canvas</p>
-            <Canvas id="canvas">
-                <Box position={[-1,1,0]} scale={10*scale} material-color={color}></Box>
+            <Canvas id="canvas" camera={{position:[0,2,5],fov:50,near:0.1,far:100}}>
+                <StudioLights></StudioLights>
+                <ModelSwitcher scale={isMobile? scale -0.03:scale} isMobile={isMobile}/>
             </Canvas>
         </section>
     )
